@@ -127,10 +127,21 @@ fn clear_toasts(mut events: MessageReader<ClearToastMessage>, mut storage: ResMu
     events.clear();
 }
 
-fn show_toast(mut storage: ResMut<ToastStorage>, mut ctxs: EguiContexts) {
+/* fn show_toast(mut storage: ResMut<ToastStorage>, mut ctxs: EguiContexts) {
     if let Ok(single_ctx) = ctxs.ctx_mut() {
         storage.toasts.show(single_ctx);
     }
+} */
+
+fn show_toast(mut storage: ResMut<ToastStorage>, mut ctxs: EguiContexts) {
+    let ctx = ctxs.ctx_mut().unwrap(); // Asegúrate de manejar el error adecuadamente
+
+    // Intenta convertir tu contexto a una referencia inmutable si el método lo pide
+    egui::Area::new(egui::Id::new("toast_area"))
+        .fixed_pos(egui::pos2(0.0, 0.0))
+        .show(&*ctx, |ui| { // El &* convierte &mut Context a &Context
+            storage.toasts.show(ui);
+        });
 }
 
 #[cfg(test)]

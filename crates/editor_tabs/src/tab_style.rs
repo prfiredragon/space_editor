@@ -38,7 +38,7 @@ impl Default for CollectedStyle {
 pub fn to_label(text: &str, size: f32) -> RichText {
     RichText::new(text)
         .size(size)
-        .family(egui_dock::egui::FontFamily::Proportional)
+        .family(bevy_egui::egui::FontFamily::Proportional)
 }
 
 #[derive(Default, Resource)]

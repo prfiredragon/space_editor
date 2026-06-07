@@ -26,7 +26,7 @@ pub struct EditorTabViewer<'a, 'w, 's> {
 impl<'a, 'w, 's> egui_dock::TabViewer for EditorTabViewer<'a, 'w, 's> {
     type Tab = TabNameHolder;
 
-    fn ui(&mut self, ui: &mut egui::Ui, tab_name: &mut Self::Tab) {
+    fn ui(&mut self, ui: &mut egui_dock::egui::Ui, tab_name: &mut Self::Tab) {
         if let Some(reg) = self.registry.get_mut(tab_name) {
             match reg {
                 EditorUiReg::ResourceBased {
@@ -55,7 +55,7 @@ impl<'a, 'w, 's> egui_dock::TabViewer for EditorTabViewer<'a, 'w, 's> {
         }
     }
 
-    fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
+    fn title(&mut self, tab: &mut Self::Tab) -> egui_dock::egui::WidgetText {
         if let Some(reg) = self.registry.get(tab) {
             match reg {
                 EditorUiReg::ResourceBased {
@@ -83,13 +83,16 @@ impl<'a, 'w, 's> egui_dock::TabViewer for EditorTabViewer<'a, 'w, 's> {
 
     fn add_popup(
         &mut self,
-        ui: &mut egui::Ui,
-        surface: egui_dock::SurfaceIndex,
-        node: egui_dock::NodeIndex,
+        ui: &mut egui_dock::egui::Ui,
+        node_path: egui_dock::NodePath,
     ) {
         ui.set_min_width(200.0);
         ui.style_mut().visuals.button_frame = false;
         let mut counter = 0;
+
+        let surface = node_path.surface;
+        let node = node_path.node;
+
         let mut tab_registry: Vec<(&TabNameHolder, &EditorUiReg)> = self.registry.iter().collect();
         tab_registry.sort_by(|a, b| a.0.cmp(b.0));
 
