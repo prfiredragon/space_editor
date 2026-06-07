@@ -42,7 +42,7 @@ repository = "https://github.com/rewin123/space_editor"
 homepage = "https://github.com/rewin123/space_editor"
 
 [workspace.dependencies]
-bevy = { version = "0.18.0", features = [
+bevy = { version = "0.18.1", features = [
     "bevy_gltf",
     "bevy_log",
     "bevy_window",
@@ -53,6 +53,8 @@ bevy = { version = "0.18.0", features = [
     "bevy_gizmos",
     "picking",
 ] }
+
+
 
 # Editor Crates
 space_prefab = { version = "0.9.0", path = "crates/prefab" }
@@ -99,8 +101,8 @@ bevy_panorbit_camera = "0.34.0"
 bevy_mod_outline = { git = "https://github.com/LesserKnownThings/bevy_mod_outline.git", rev = "0851a03" }
 # below has not been updated to bevy 0.16
 
-transform-gizmo-bevy = {git = "https://github.com/MiniMinerX/transform-gizmo", branch = "bevy-0.18"}
-transform-gizmo-egui = {git = "https://github.com/MiniMinerX/transform-gizmo", branch = "bevy-0.18"}
+transform-gizmo-bevy = {git = "https://github.com/prfiredragon/transform-gizmo", branch = "bevy-0.18.1"}
+transform-gizmo-egui = {git = "https://github.com/prfiredragon/transform-gizmo", branch = "bevy-0.18.1"}
 #transform-gizmo-bevy = "0.8.0"
 #transform-gizmo-egui = "0.8.0"
 
