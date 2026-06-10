@@ -8,7 +8,7 @@ pub mod tab_viewer;
 
 use std::fmt::Display;
 
-use bevy::{ecs::{system::ScheduleSystem, world::CommandQueue}, platform::collections::HashMap, prelude::*, window::PrimaryWindow};
+use bevy::{ecs::{system::ScheduleSystem, world::CommandQueue}, platform::collections::HashMap, prelude::*};
 
 use bevy_egui::{EguiContext, PrimaryEguiContext, egui};
 

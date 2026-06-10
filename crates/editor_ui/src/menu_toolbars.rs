@@ -476,9 +476,16 @@ pub fn top_menu(
                 }
                 // END Load Scene
 
-                // Open GLTF
-                let open_gltf_button =
-                    prefab_icon(sizing.icon.to_size(), "").stroke(stroke_default_color());
+
+                // Open GLTF                
+                egui_extras::install_image_loaders(ui.ctx());
+                /* let gltf_size: f32 = sizing.icon.to_size(); 
+                let gltf_image_source = egui::include_image!("../assets/icons/gltf.png");
+                let open_gltf_button = egui::Button::image(
+                    egui::Image::new(gltf_image_source)
+                        .fit_to_exact_size(egui::Vec2::splat(gltf_size))
+                ).stroke(stroke_default_color()); */
+                let open_gltf_button = prefab_icon(sizing.icon.to_size(), " ").stroke(stroke_default_color());
                 if ui
                     .add(open_gltf_button)
                     .on_hover_text("Open GLTF/GLB as prefab")

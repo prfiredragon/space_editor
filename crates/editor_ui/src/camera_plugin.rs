@@ -77,6 +77,10 @@ pub fn update_pan_orbit(
 ) {
     for mut pan_orbit in pan_orbit_query.iter_mut() {
         pan_orbit.enabled = state.0;
+        /* pan_orbit.button_orbit = MouseButton::Middle;
+        pan_orbit.button_pan = MouseButton::Middle;
+        pan_orbit.modifier_orbit = Some(KeyCode::KeyG);
+        pan_orbit.modifier_pan = Some(KeyCode::ShiftRight); */
     }
 }
 

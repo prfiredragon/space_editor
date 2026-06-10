@@ -1,14 +1,11 @@
-use bevy::log::tracing_subscriber::filter::targets;
 use bevy::{prelude::*};
-use bevy_egui::egui::{self, Key};
+use bevy_egui::egui::{self};
 use bevy_panorbit_camera::PanOrbitCamera;
 use space_editor_core::prelude::*;
-use space_editor_ui::{icons::*, EditorGizmo};
-use space_editor_ui::prelude::CloneEvent;
+use space_editor_ui::icons::*;
 use space_editor_ui::{colors::*, sizing::Sizing};
 use space_shared::*;
-use transform_gizmo_bevy::{EnumSet, Gizmo, GizmoCamera, GizmoMode, GizmoTarget, TransformGizmoPlugin};
-use transform_gizmo_egui::GizmoExt;
+use transform_gizmo_bevy::{EnumSet, GizmoCamera, GizmoMode, GizmoTarget, TransformGizmoPlugin};
 use crate::*;
 use crate::game_view_tool::*;
 use space_editor_ui::prelude::update_pan_orbit;
@@ -78,7 +75,7 @@ pub fn selected_trigger(
     gizmo_targets: Query<(Entity, &GizmoTarget)>,
 ) {
     // Delete the previous gizmo target if it exists
-    for (gizmo_target, gm_data) in gizmo_targets.iter() {
+    for (gizmo_target, _gm_data) in gizmo_targets.iter() {
         commands.entity(gizmo_target).remove::<GizmoTarget>();
     }
 
@@ -169,7 +166,7 @@ impl GameViewTool for GizmoTool {
     fn ui(
         &mut self, 
         ui: &mut egui::Ui, 
-        commands: &mut Commands, 
+        _commands: &mut Commands, 
         world: &mut World,
     ) {
         let sizing = world.resource::<Sizing>().clone();

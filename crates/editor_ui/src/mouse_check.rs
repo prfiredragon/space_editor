@@ -1,20 +1,22 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+/* use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::EguiContexts;
-use space_shared::toast::*;
+use space_shared::toast::*; */
+
+use bevy::prelude::*;
 
 #[derive(Default)]
 pub struct MouseCheck;
 
 impl Plugin for MouseCheck {
     #[cfg(not(tarpaulin_include))]
-    fn build(&self, app: &mut App) {
+    fn build(&self, _app: &mut App) {
         //app.init_resource::<PointerContextCheck>()
         //    .add_systems(Startup, initialize_mouse_context)
         //    .add_systems(PreUpdate, update_mouse_context);
     }
 }
 
-#[derive(Resource)]
+/* #[derive(Resource)]
 pub struct PointerContextCheck {
     pointer_is_valid: bool,
     primary_window: Option<Entity>,
@@ -27,9 +29,9 @@ impl Default for PointerContextCheck {
             primary_window: None,
         }
     }
-}
+} */
 
-pub fn initialize_mouse_context(
+/* pub fn initialize_mouse_context(
     mut toast: MessageWriter<ToastMessage>,
     mut pointer_ctx: ResMut<PointerContextCheck>,
     window_q: Query<Entity, With<PrimaryWindow>>,
@@ -43,9 +45,9 @@ pub fn initialize_mouse_context(
         ));
         error!("could not get Primary Window");
     }
-}
+} */
 
-pub fn update_mouse_context(
+/* pub fn update_mouse_context(
     mut pointer_ctx: ResMut<PointerContextCheck>,
     mut egui_ctxs: EguiContexts,
 ) {
@@ -55,4 +57,4 @@ pub fn update_mouse_context(
             pointer_ctx.pointer_is_valid = !ctx.wants_pointer_input();
         }
     }
-}
+} */

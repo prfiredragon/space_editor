@@ -2,15 +2,14 @@ pub mod game_view_tool;
 pub mod gizmo_tool;
 
 
-use bevy::{camera::{SubCameraView, Viewport}, ecs::schedule::ScheduleLabel, log::tracing_subscriber::fmt::time, prelude::*, window::PrimaryWindow};
+use bevy::{camera::Viewport, prelude::*, window::PrimaryWindow};
 use bevy_egui::{
-    egui::{self, debug_text::print, RichText, Widget}, EguiContext, EguiContextSettings, EguiPrimaryContextPass
+    egui::{self, RichText, Widget}, EguiPrimaryContextPass
 };
 use game_view_tool::GameViewTool;
-use space_editor_ui::{colors::{SPECIAL_BG_COLOR, TEXT_COLOR, WARN_COLOR}, prelude::{EditorTabName, SetCameraViewport, ShowEditorUi}, sizing::Sizing, ui_picking::NonUIAreas};
+use space_editor_ui::{colors::{SPECIAL_BG_COLOR, TEXT_COLOR, WARN_COLOR}, prelude::EditorTabName, ui_picking::NonUIAreas};
 use space_prefab::prelude::EditorRegistryExt;
-use space_undo::UndoRedo;
-use transform_gizmo_bevy::{Color32, GizmoMode, GizmoOptions};
+use transform_gizmo_bevy::GizmoMode;
 
 use space_shared::*;
 
@@ -213,7 +212,7 @@ pub fn set_camera_viewport(
 ) {
     //println!("Setting GameViewTab Camera viewport");
 
-    let Ok((entity, window)) = primary_window.single() else {
+    let Ok((_entity, window)) = primary_window.single() else {
         return;
     };
 

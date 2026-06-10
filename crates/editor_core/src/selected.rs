@@ -68,6 +68,53 @@ fn selected_entity_wireframe_update(
     use bevy_mod_outline::OutlineMode;
 
     for e in del_wireframe.iter() {
+        // CAMBIAMOS Some por Ok
+        if let Ok(mut entity_cmd) = cmds.get_entity(e) {
+            entity_cmd
+                .remove::<OutlineVolume>()
+                .remove::<OutlineMode>();
+        }
+    }
+
+    for e in need_wireframe.iter() {
+        // CAMBIAMOS Some por Ok
+        if let Ok(mut entity_cmd) = cmds.get_entity(e) {
+            entity_cmd.insert((
+                OutlineVolume {
+                    visible: true,
+                    colour: Color::srgb(1.0, 1.0, 0.0),
+                    width: 2.0,
+                },
+                OutlineMode::ExtrudeReal,
+            ));
+        }
+    }
+}
+
+#[cfg(feature = "bevy_mod_outline")]
+fn clear_wireframes(mut cmds: Commands, del_wireframe: Query<Entity, With<OutlineVolume>>) {
+    use bevy_mod_outline::OutlineMode;
+
+    for e in del_wireframe.iter() {
+        // CAMBIAMOS Some por Ok
+        if let Ok(mut entity_cmd) = cmds.get_entity(e) {
+            entity_cmd
+                .remove::<OutlineVolume>()
+                .remove::<OutlineMode>();
+        }
+    }
+}
+
+/* 
+#[cfg(feature = "bevy_mod_outline")]
+fn selected_entity_wireframe_update(
+    mut cmds: Commands,
+    del_wireframe: Query<Entity, (With<OutlineVolume>, Without<Selected>)>,
+    need_wireframe: Query<Entity, (Without<OutlineVolume>, With<Selected>)>,
+) {
+    use bevy_mod_outline::OutlineMode;
+
+    for e in del_wireframe.iter() {
         cmds.entity(e)
             .remove::<OutlineVolume>()
             .remove::<OutlineMode>();
@@ -94,7 +141,7 @@ fn clear_wireframes(mut cmds: Commands, del_wireframe: Query<Entity, With<Outlin
             .remove::<OutlineVolume>()
             .remove::<OutlineMode>();
     }
-}
+} */
 
 #[cfg(test)]
 #[cfg(not(feature = "bevy_mod_outline"))]

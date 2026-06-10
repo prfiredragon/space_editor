@@ -1,17 +1,15 @@
 use bevy::{
-    camera::{RenderTarget, Viewport}, core_pipeline::tonemapping::DebandDither, prelude::*, render::{
+    camera::Viewport, core_pipeline::tonemapping::DebandDither, prelude::*, render::{
         camera::{CameraRenderGraph, TemporalJitter},
         render_resource::{
             Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
         },
     }, window::PrimaryWindow
 };
-use bevy_egui::{
-    EguiContexts, EguiTextureHandle, egui::{self, RichText}
-};
+use bevy_egui::egui::{self, RichText};
 
 use space_prefab::component::PlaymodeCamera;
-use space_shared::{toast::ToastMessage, *};
+use space_shared::*;
 
 use crate::{
     DisableCameraSkip, RenderLayers, editor_tab_name::EditorTabName, prelude::GameModeSettings, ui_picking::NonUIAreas
@@ -211,11 +209,11 @@ impl EditorTab for CameraViewTab {
             }
 
             // Moves camera below the selection
-            let pos = ui.next_widget_position();
-            let mut clipped = ui.clip_rect();
+            let _pos = ui.next_widget_position();
+            let clipped = ui.clip_rect();
             self.viewport_rect = Some(clipped);
 
-            let mut need_recreate_texture = false;
+            let _need_recreate_texture = false;
         });
     }
 
@@ -319,7 +317,7 @@ fn sync_preview_camera_transform(
 }
 
 fn adjust_camera_view_order(
-    ui_state: Res<CameraViewTab>,
+    _ui_state: Res<CameraViewTab>,
     editor_ui: Option<Res<space_editor_tabs::EditorUi>>,
     mut camera_view_cameras: Query<&mut Camera, With<EditorCameraViewTabCamera>>,
     mut game_view_cameras: Query<&mut Camera, (With<EditorGameViewWorldCameraMarker>, Without<EditorCameraViewTabCamera>)>,

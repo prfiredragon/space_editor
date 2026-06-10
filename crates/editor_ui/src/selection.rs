@@ -1,6 +1,20 @@
-use crate::*;
-use bevy::{color::palettes::tailwind::{PINK_100, RED_500}, picking::pointer::PointerInteraction, prelude::*};
+use std::ops::ControlFlow::Continue;
 
+use crate::*;
+use bevy::prelude::*;
+//use bevy::{color::palettes::tailwind::{PINK_100, RED_500}, picking::pointer::PointerInteraction, prelude::*};
+
+
+/* #[derive(Resource, Default, Debug)]
+pub struct HoveredMesh(pub Option<Entity>);
+ */
+
+/// This event used for selecting entities
+#[derive(EntityEvent, Clone)]
+#[entity_event(propagate)]
+pub struct SelectEvent {
+    entity: Entity
+}
 
 
 #[cfg(not(tarpaulin_include))]
@@ -9,13 +23,25 @@ pub fn plugin(app: &mut App) {
         app.add_plugins(MeshPickingPlugin);
     }
 
-    //app.add_observer(on_pointer_click);
+    //app.init_resource::<HoveredMesh>();
+
+    //app.add_observer(on_pointer_click_b);
+    //app.add_observer(on_pointer_click_c);
 
 
     //app.add_systems(
     //    Update,
     //    (delete_selected, reemit_pointer_click)// auto_add_markers)
     //);
+    app.add_systems(
+        Update,
+        (auto_add_markers,
+        //handle_click_selection,
+    
+    )
+    );
+
+    
 
     //app.add_systems(
     //    Update,
@@ -28,12 +54,55 @@ pub fn plugin(app: &mut App) {
     //app.add_observer(recursive_add_markers);
 
     app.insert_resource(MeshPickingSettings {
-        require_markers: true,
+        require_markers: false,
         ray_cast_visibility: RayCastVisibility::VisibleInView
     });
 }
 
-fn auto_add_markers(
+
+/* 
+pub fn handle_click_selection(
+    mouse: Res<ButtonInput<MouseButton>>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+    hovered: Res<HoveredMesh>,
+    query_selected: Query<Entity, With<Selected>>,
+    mut commands: Commands,
+) {
+    // Solo reaccionamos en el instante del clic izquierdo
+    if !mouse.just_pressed(MouseButton::Left) {
+        return;
+    }
+    info!("Hovered : {:?}", hovered.0);
+    // Si el ratón no está encima de ninguna malla 3D, ignoramos el clic
+    let Some(target_entity) = hovered.0 else {
+        return;
+    };
+
+    let is_shifting = keyboard.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
+
+    if !is_shifting {
+        // Limpiamos la selección anterior
+        for e in query_selected.iter() {
+            if e != target_entity {
+                commands.entity(e).remove::<Selected>();
+            }
+        }
+        commands.entity(target_entity).insert(Selected);
+    } else {
+        // Toggle con Shift
+        if query_selected.contains(target_entity) {
+            commands.entity(target_entity).remove::<Selected>();
+        } else {
+            commands.entity(target_entity).insert(Selected);
+        }
+    }
+    
+    info!("¡Selección perfecta vía Hover+Click!: {:?}", target_entity);
+}
+
+ */
+
+/* fn auto_add_markers(
     mut commands: Commands,
     q_prefabs: Query<Entity, (With<PrefabMarker>, Without<MeshPickingCamera>)>,
     q_cameras: Query<Entity, (With<Camera3d>, Without<MeshPickingCamera>)>,
@@ -45,9 +114,9 @@ fn auto_add_markers(
     for entity in q_cameras.iter() {
         commands.entity(entity).insert(MeshPickingCamera);
     }
-}
+} */
 
-#[derive(EntityEvent, Clone)]
+/* #[derive(EntityEvent, Clone)]
 struct AddMarkersEvent{
     entity: Entity
 }
@@ -70,8 +139,8 @@ fn recursive_add_markers(
             commands.trigger(AddMarkersEvent { entity: child.entity() } );
         }
     }
-}
-
+} */
+/* 
 /// From bevy examples
 /// A system that draws hit indicators for every pointer.
 fn draw_mesh_intersections(pointers: Query<&PointerInteraction>, mut gizmos: Gizmos) {
@@ -110,7 +179,7 @@ fn reemit_pointer_click(
 
     // Clear the continuous flag
     *local = false;
-}
+} */
 
 pub fn select_listener(
     mut trigger: On<SelectEvent>,
@@ -150,12 +219,7 @@ pub fn select_listener(
 
 
 
-/// This event used for selecting entities
-#[derive(EntityEvent, Clone)]
-#[entity_event(propagate)]
-pub struct SelectEvent {
-    entity: Entity
-}
+
 
 pub fn delete_selected(
     mut commands: Commands,
@@ -175,15 +239,165 @@ pub fn delete_selected(
 }
 
 
-pub fn on_pointer_click(
-    mut trigger: On<Pointer<Press>>,
-    mut commands: Commands,
-    q_meshes: Query<Entity, With<Mesh3d>>,
+/* pub fn on_pointer_click(
+    _trigger: On<Pointer<Press>>,
+    _commands: Commands,
+    _q_meshes: Query<Entity, With<Mesh3d>>,
 ) {
     // info!("Pointer Click: {:?}", trigger.target());
 
     // if q_meshes.contains(trigger.target()) {
     //     commands.trigger_targets(SelectEvent, trigger.target());
     // }
+} */
+
+// Necesitamos importar KeyCode y ButtonInput para manejar la tecla Shift
+use bevy::input::ButtonInput;
+
+pub fn on_pointer_click(
+    mut trigger: On<Pointer<Out>>, // Usamos Click para que sea más preciso que Over
+    mut commands: Commands,
+    query_selected: Query<Entity, With<Selected>>,
+    query_cameras: Query<Entity, Or<(With<Camera3d>, With<PlaymodeCamera>)>>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    info!("Pointer Over: {:?}", trigger.event_target());
+    let target_entity = trigger.event_target();
+
+    // 1. Filtro de seguridad: Ignorar cámaras
+    if query_cameras.contains(target_entity) {
+        return;
+    }
+
+    // 2. Lógica de Selección
+    let is_shifting = keyboard.any_pressed([KeyCode::ShiftLeft]);
+    let is_ctrling = keyboard.any_pressed([KeyCode::ControlLeft]);
+
+    if !is_shifting & is_ctrling{
+        // Modo selección única: Limpiar todo lo previo
+        for e in query_selected.iter() {
+            if e != target_entity {
+                commands.entity(e).remove::<Selected>();
+            }
+        }
+        commands.entity(target_entity).insert(Selected);
+    } else if is_shifting {
+        // Modo selección múltiple (Shift): Toggle (quitar si ya está, poner si no)
+        if query_selected.contains(target_entity) {
+            commands.entity(target_entity).remove::<Selected>();
+        } else {
+            commands.entity(target_entity).insert(Selected);
+        }
+    }
+
+    trigger.propagate(true);
+    //info!("Entidad seleccionada: {:?}", target_entity);
 }
 
+
+fn auto_add_markers(
+    mut commands: Commands,
+    q_prefabs: Query<Entity, (With<PrefabMarker>, With<Mesh3d>, Without<Pickable>)>,
+    //q_cameras: Query<Entity, (With<Camera3d>, Without<MeshPickingCamera>)>,
+    q_meshes: Query<Entity, (With<Mesh3d>, Without<Pickable>)>,
+) {
+    /* if !q_cameras.is_empty() {
+        info!("q_cameras: {:?}", q_cameras);
+        for entity in q_cameras.iter() {
+            commands.entity(entity).insert(MeshPickingCamera);
+        } 
+    } */
+    if q_prefabs.is_empty() {return;}
+    info!("q_meshes: {:?}", q_meshes);
+    info!("q_prefabs: {:?}", q_prefabs);
+    /* for entity in q_prefabs.iter() {
+        commands.trigger(AddMarkersEvent { entity } );
+    } */
+
+    /* for entity in q_cameras.iter() {
+        commands.entity(entity).insert(MeshPickingCamera);
+    } */
+    for entity in q_prefabs.iter() {
+        commands.entity(entity).insert(Pickable {
+            should_block_lower: true,
+            is_hoverable: true,
+        }).observe(on_pointer_click)
+        //.observe(on_pointer_click_over)
+        // Cuando el ratón sale, limpiamos la memoria
+        //.observe(on_pointer_click_out)
+        
+        ;
+    }
+}
+/* 
+pub fn on_pointer_click_over(trigger: On<Pointer<Over>>, mut hovered: ResMut<HoveredMesh>
+){
+    hovered.0 = Some(trigger.event_target());
+    info!("Pointer Over: {:?}", trigger.event_target());
+}
+
+pub fn on_pointer_click_out(trigger: On<Pointer<Out>>, mut hovered: ResMut<HoveredMesh>
+){
+    info!("Pointer Out: {:?}", trigger.event_target());
+    if hovered.0 == Some(trigger.event_target()) {
+        hovered.0 = None;
+    }
+}
+
+pub fn on_pointer_click_press(trigger: On<Pointer<Press>>, mut hovered: ResMut<HoveredMesh>
+){
+    //hovered.0 = Some(trigger.event_target());
+    info!("Pointer Press: {:?}", trigger.event_target());
+}
+
+pub fn on_pointer_click_test(
+    trigger: On<Pointer<Press>>,
+    _commands: Commands,
+    _q_meshes: Query<Entity, With<Mesh3d>>,
+) {
+     info!("Pointer Click: {:?}", trigger.event_target());
+
+     /* if q_meshes.contains(trigger.target()) {
+         commands.trigger_targets(SelectEvent, trigger.target());
+     } */
+}
+
+pub fn on_pointer_click_b(
+    mut trigger: On<Pointer<Press>>,
+    _commands: Commands,
+    _q_meshes: Query<Entity, With<Mesh3d>>,
+    mut pan_orbit_state: ResMut<EditorCameraEnabled>,
+    mut pan_orbit_query: Query<&mut PanOrbitCamera>,
+) {
+     info!("Pointer Press: {:?}", trigger.event_target());
+     /* if !pan_orbit_state.0 {
+        pan_orbit_state.0 = true;
+        for mut pan_orbit in pan_orbit_query.iter_mut() {
+            pan_orbit.enabled = false;
+        }
+        trigger.propagate(true);
+        return;
+    } */
+
+     /* if q_meshes.contains(trigger.target()) {
+         commands.trigger_targets(SelectEvent, trigger.target());
+     } */
+}
+
+pub fn on_pointer_click_c(
+    mut trigger: On<Pointer<Click>>,
+    _commands: Commands,
+    _q_meshes: Query<Entity, With<Mesh3d>>,
+    mut pan_orbit_state: ResMut<EditorCameraEnabled>,
+) {
+     info!("Pointer Click: {:?}", trigger.event_target());
+     /* if !pan_orbit_state.0 {
+        pan_orbit_state.0 = true;
+        trigger.propagate(true);
+        return;
+    } */
+
+     /* if q_meshes.contains(trigger.target()) {
+         commands.trigger_targets(SelectEvent, trigger.target());
+     } */
+} */

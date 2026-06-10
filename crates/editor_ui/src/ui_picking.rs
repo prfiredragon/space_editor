@@ -1,9 +1,8 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 
 use bevy_egui::*;
 use space_shared::EditorSet;
 
-use crate::prelude::EditorCameraEnabled;
 
 
 pub struct UiPickingPlugin;

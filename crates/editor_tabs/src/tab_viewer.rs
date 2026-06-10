@@ -3,7 +3,6 @@ use crate::{
     CollectedStyle, EditorTab, EditorUiReg,
 };
 use bevy::{platform::collections::HashMap, prelude::*};
-use bevy_egui::egui;
 use convert_case::{Case, Casing};
 
 pub enum EditorTabCommand {

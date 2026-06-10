@@ -1,6 +1,4 @@
-use bevy::{ecs::world, prelude::*};
-use space_editor_ui::sizing::Sizing;
-use transform_gizmo_bevy::GizmoOptions;
+use bevy::prelude::*;
 
 use crate::GameViewTab;
 

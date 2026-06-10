@@ -27,7 +27,7 @@ pub fn many_unimplemented<T: Any>(
 */
 
 pub fn many_unimplemented<T: Any>(
-    ui: &mut egui::Ui,
+    _ui: &mut egui::Ui,
     _options: &dyn Any,
     _id: egui::Id,
     _env: InspectorUi<'_, '_>,

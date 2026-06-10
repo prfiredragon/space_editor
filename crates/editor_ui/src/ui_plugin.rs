@@ -37,7 +37,7 @@ impl FlatPluginList for EditorUiPlugin {
     #[cfg(not(tarpaulin_include))]
     fn add_plugins_to_group(&self, group: PluginGroupBuilder) -> PluginGroupBuilder {
 
-        let mut res = group
+        let res = group
             .add(SelectedPlugin)
             //.add(MeshlessVisualizerPlugin)
             .add(EditorUiCore::default())

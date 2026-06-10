@@ -333,7 +333,7 @@ fn clone_enitites(
     mut commands: Commands,
     query: Query<EntityRef>,
     mut events: MessageReader<CloneEvent>,
-    editor_registry: Res<EditorRegistry>,
+    _editor_registry: Res<EditorRegistry>,
 ) {
     for event in events.read() {
         let mut queue = vec![(event.id, commands.spawn_empty().id())];
@@ -343,7 +343,7 @@ fn clone_enitites(
             map.insert(src_id, dst_id);
             if let Ok(entity) = query.get(src_id) {
                 if entity.contains::<PrefabMarker>() {
-                    let mut cmds = commands.entity(dst_id).insert(ClonedEntity);
+                    let _cmds = commands.entity(dst_id).insert(ClonedEntity);
                     commands.entity(src_id).clone_with_opt_out(dst_id, |_| {});
 
                     // editor_registry.clone_entity_flat(&mut cmds, &entity);
